@@ -1,0 +1,65 @@
+-- Step 1: Create Database and Tables (with Primary Key and Foreign Key)
+CREATE DATABASE IF NOT EXISTS expense_tracker_db;
+USE expense_tracker_db;
+
+DROP TABLE IF EXISTS expenses;
+DROP TABLE IF EXISTS categories;
+
+-- Parent Table: Categories
+CREATE TABLE categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Child Table: Expenses (includes Foreign Key referencing categories)
+CREATE TABLE expenses (
+    expense_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    category_id INT NOT NULL,
+    expense_date DATE NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+-- Step 2: Insert Category Data
+INSERT INTO categories (category_name) VALUES 
+('Food & Dining'), 
+('Transport'), 
+('Utilities & Bills'), 
+('Shopping'), 
+('Education & Books');
+
+-- Step 3: Insert 10 Sample Expense Records
+INSERT INTO expenses (title, amount, category_id, expense_date) VALUES
+('Lunch at University Canteen', 150.00, 1, '2026-11-01'),
+('Bus Fare to Campus', 60.00, 2, '2026-11-01'),
+('Mobile Internet Package', 399.00, 3, '2026-11-02'),
+('DBMS Reference Book', 550.00, 5, '2026-11-03'),
+('Evening Snacks & Tea', 80.00, 1, '2026-11-04'),
+('Rickshaw Fare', 50.00, 2, '2026-11-05'),
+('Grocery & Fruits', 620.00, 1, '2026-11-06'),
+('New Earphones', 850.00, 4, '2026-11-08'),
+('Electricity Bill Share', 1200.00, 3, '2026-11-10'),
+('Lab Printout & Binding', 120.00, 5, '2026-11-12');
+
+-- Step 4: Core Project SQL Queries (CRUD & Aggregate Functions)
+
+-- 1. Retrieve all expense records along with category names (SELECT with JOIN)
+SELECT e.expense_id, e.title, c.category_name, e.amount, e.expense_date 
+FROM expenses e 
+JOIN categories c ON e.category_id = c.category_id;
+
+-- 2. Search or filter records (SELECT with WHERE)
+SELECT * FROM expenses WHERE title LIKE '%Bus%' OR amount > 500;
+
+-- 3. Update an existing record (UPDATE)
+UPDATE expenses SET amount = 180.00 WHERE expense_id = 1;
+
+-- 4. Delete a specific record (DELETE)
+DELETE FROM expenses WHERE expense_id = 5;
+
+-- 5. Summary metrics using Aggregate Functions (COUNT, SUM, AVG, MAX)
+SELECT COUNT(*) AS total_transactions FROM expenses;
+SELECT SUM(amount) AS total_expense FROM expenses;
+SELECT AVG(amount) AS average_expense FROM expenses;
+SELECT MAX(amount) AS highest_expense FROM expenses;
